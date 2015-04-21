@@ -12,7 +12,7 @@ CREATE TABLE ALUMNO
     expediente VARCHAR2 (20) NOT NULL ,
     nombre     VARCHAR2 (25) NOT NULL ,
     apellidos  VARCHAR2 (50) NOT NULL ,
-    fecha_alta DATE NOT NULL
+    fecha_alta TIMESTAMP NOT NULL
   ) ;
 ALTER TABLE ALUMNO ADD CONSTRAINT ALUMNO_PK PRIMARY KEY
 (
@@ -102,8 +102,8 @@ ALTER TABLE PROFESOR ADD CONSTRAINT PROFESOR_PK PRIMARY KEY
 CREATE TABLE RELACION
   (
     id_relacion                 INTEGER NOT NULL ,
-    created_at              TIMESTAMP NOT NULL ,
-    fecha_entrega               DATE NOT NULL ,
+    created_at                  TIMESTAMP NOT NULL ,
+    fecha_entrega               TIMESTAMP NOT NULL ,
     MATRICULA_ALUMNO_dni_alumno VARCHAR2 (9) NOT NULL ,
     MATRICULA_ASIGNATURA_codigo VARCHAR2 (10) NOT NULL ,
     MATRICULA_curso_academico   VARCHAR2 (5) NOT NULL ,
