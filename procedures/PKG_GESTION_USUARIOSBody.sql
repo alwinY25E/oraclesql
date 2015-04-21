@@ -1,5 +1,4 @@
-CREATE OR REPLACE
-PACKAGE BODY PKG_GESTION_USUARIOS AS
+create or replace PACKAGE BODY PKG_GESTION_USUARIOS AS
 
   -- El proceso crea un usuario con el nombre dado. 
   -- La password inicial sera el nombre de usuario.
@@ -51,9 +50,25 @@ PACKAGE BODY PKG_GESTION_USUARIOS AS
     WHEN OTHERS THEN DBMS_OUTPUT.PUT_LINE('Ha ocurrido un error '|| SQLERRM);
   END PR_KILL_SESSION;
   
-  PROCEDURE PR_CREAR_USUARIO_ASIG(ASIGNATURA IN Asignatura.nombre%TYPE) AS
+  -- El proceso crea todos los usuarios que pertenecen a la asignatura. 
+  -- Si no se proporciona curso academico se toma por defecto el curso actual.
+  -- Calculado con to_char(sysdate, 'YY')||'/'||to_char(add_months(sysdate,12), 'YY')
+  -- Param: ASIGNATURA, CURSO ACADEMICO
+  PROCEDURE PR_CREAR_USUARIO_ASIG(ASIGNATURA IN Asignatura.nombre%TYPE, 
+      CURSO IN Matricula.Curso_academico%TYPE DEFAULT to_char(sysdate, 'YY')||'/'||to_char(add_months(sysdate,12), 'YY')) AS
+    -- Cursor con todos los nombres de usuarios de alumnos que pertenecen
+    -- a la asignatura con el nombre dado
+    CURSOR C_USUARIOS_ASIG IS
+    SELECT Matricula.usuario FROM Matricula 
+    JOIN Asignatura ON Matricula.asignatura_codigo = Asignatura.codigo
+    WHERE UPPER(Asignatura.nombre) = UPPER(ASIGNATURA)
+    AND Matricula.curso_academico = CURSO;
   BEGIN
-    NULL;
+    -- Recorremos el cursor y vamos creando usuarios
+    FOR VAR_USUARIO IN C_USUARIOS_ASIG 
+    LOOP
+      PR_CREAR_USUARIO(VAR_USUARIO.usuario);
+    END LOOP;
   END PR_CREAR_USUARIO_ASIG;
 
   -- El proceso borra todos los usuarios que pertenecen a la asignatura. 
