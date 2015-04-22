@@ -1,0 +1,17 @@
+
+CREATE OR REPLACE
+PACKAGE BODY PKG_CORRECCION_EJERCICIOS AS
+
+PROCEDURE PR_CORREGIR_EJERCICIOS(id_ejer in ejercicio.id_ejercicio%type, answer in respuesta.respuesta%type) AS
+var_cont number;
+VAR_EJERCICIO ejercicio.SOLUCION%TYPE;
+  BEGIN
+    SELECT EJERCICIO.SOLUCION INTO VAR_EJERCICIO FROM EJERCICIO WHERE ID_EJERCICIO = id_ejer;
+    DBMS_OUTPUT.PUT_LINE('CREATE or replace VIEW CORRECCION AS (('|| VAR_EJERCICIO || ' MINUS ' || ANSWER || ') UNION (' ||ANSWER|| ' MINUS ' || VAR_EJERCICIO || '))');
+  EXECUTE IMMEDIATE  'CREATE or replace VIEW CORRECCION AS (('|| VAR_EJERCICIO || ' MINUS ' || ANSWER || ') UNION (' ||ANSWER|| ' MINUS ' || VAR_EJERCICIO || '))' ;
+  select count(*) into var_cont from CORRECCION ;
+  dbms_output.put_line(var_cont);
+  
+  END PR_CORREGIR_EJERCICIOS;
+  
+END PKG_CORRECCION_EJERCICIOS;
