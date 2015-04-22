@@ -110,17 +110,16 @@ ALTER TABLE RELACION ADD CONSTRAINT RELACION_PK PRIMARY KEY
 )
 ;
 
-CREATE TABLE RELACION_DE_EJERCICIOS
+CREATE TABLE RELACION_MATRICULA
   (
     Matricula_dni_alumno      VARCHAR2 (9) NOT NULL ,
     Matricula_codigo          VARCHAR2 (10) NOT NULL ,
     Matricula_curso_academico VARCHAR2 (5) NOT NULL ,
-    Ejercicio_id_ejercicio    INTEGER NOT NULL ,
     numero_de_relacion        INTEGER NOT NULL
   ) ;
 ALTER TABLE RELACION_DE_EJERCICIOS ADD CONSTRAINT Relation_5__IDX PRIMARY KEY
 (
-  Matricula_dni_alumno, Matricula_codigo, Matricula_curso_academico, Ejercicio_id_ejercicio
+  Matricula_dni_alumno, Matricula_codigo, Matricula_curso_academico, numero_de_relacion
 )
 ;
 
