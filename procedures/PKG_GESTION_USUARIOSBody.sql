@@ -144,16 +144,7 @@ create or replace PACKAGE BODY PKG_GESTION_USUARIOS AS
   PROCEDURE PR_KILL_SESSION_ASIG(ASIGNATURA IN Asignatura.nombre%TYPE,
       CURSO IN Matricula.Curso_academico%TYPE DEFAULT to_char(sysdate, 'YY')||'/'||to_char(add_months(sysdate,12), 'YY')) AS
 
-    CURSOR C_USUARIOS_ASIG IS
-      SELECT Matricula.usuario FROM Matricula
-      JOIN Asignatura ON Matricula.asignatura_codigo = Asignatura.codigo
-      WHERE UPPER(Asignatura.nombre) = UPPER(ASIGNATURA)
-      AND Matricula.curso_academico = CURSO;
-  BEGIN
-    FOR VAR_USUARIO IN C_USUARIOS_ASIG
-    LOOP
-      PR_KILL_SESSION(VAR_USUARIO.usuario);
-    END LOOP;
+    -- SELECT SID, USERNAME FROM v$session INNER JOIN docencia.matricula ON UPPER(v$session.username) = UPPER(docencia.matricula.usuario);
   END PR_KILL_SESSION_ASIG;
 
 END PKG_GESTION_USUARIOS;
