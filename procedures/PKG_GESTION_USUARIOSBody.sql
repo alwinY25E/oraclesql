@@ -8,7 +8,14 @@ create or replace PACKAGE BODY PKG_GESTION_USUARIOS AS
     -- Ejecutamos la instruccion de crear un usuario
     EXECUTE IMMEDIATE 'CREATE USER '|| NOMBRE ||' IDENTIFIED BY '|| NOMBRE;
   EXCEPTION
-    WHEN OTHERS THEN DBMS_OUTPUT.PUT_LINE('Ha ocurrido un error '|| SQLERRM);
+    WHEN OTHERS THEN
+      IF SQLCODE = -1920 THEN
+        DBMS_OUTPUT.PUT_LINE('ERROR: Usuario ya existente.');
+      ELSIF SQLCODE = -1031 THEN
+        DBMS_OUTPUT.PUT_LINE('ERROR: No tienes permisos.');
+      ELSE
+        DBMS_OUTPUT.PUT_LINE('ERROR: ' || SQLERRM);
+      END IF;
   END PR_CREAR_USUARIO;
 
   -- El proceso borra el usuario con el nombre dado. 
@@ -18,7 +25,14 @@ create or replace PACKAGE BODY PKG_GESTION_USUARIOS AS
     -- Ejecutamos la instruccion de borrar un usuario
     EXECUTE IMMEDIATE 'DROP USER '|| NOMBRE ||' CASCADE';
   EXCEPTION
-    WHEN OTHERS THEN DBMS_OUTPUT.PUT_LINE('Ha ocurrido un error '|| SQLERRM);
+    WHEN OTHERS THEN
+      IF SQLCODE = -1918 THEN
+        DBMS_OUTPUT.PUT_LINE('ERROR: Usuario no existente.');
+      ELSIF SQLCODE = -1031 THEN
+        DBMS_OUTPUT.PUT_LINE('ERROR: No tienes permisos.');
+      ELSE
+        DBMS_OUTPUT.PUT_LINE('ERROR: ' || SQLERRM);
+      END IF;
   END PR_BORRAR_USUARIO;
 
   -- El proceso bloquea el usuario con el nombre dado. 
@@ -28,7 +42,14 @@ create or replace PACKAGE BODY PKG_GESTION_USUARIOS AS
     -- Ejecutamos la instruccion de bloquear un usuario
     EXECUTE IMMEDIATE 'ALTER USER '|| NOMBRE ||' ACCOUNT LOCK';
   EXCEPTION
-    WHEN OTHERS THEN DBMS_OUTPUT.PUT_LINE('Ha ocurrido un error '|| SQLERRM);
+    WHEN OTHERS THEN
+      IF SQLCODE = -1918 THEN
+        DBMS_OUTPUT.PUT_LINE('ERROR: Usuario no existente.');
+      ELSIF SQLCODE = -1031 THEN
+        DBMS_OUTPUT.PUT_LINE('ERROR: No tienes permisos.');
+      ELSE
+        DBMS_OUTPUT.PUT_LINE('ERROR: ' || SQLERRM);
+      END IF;
   END PR_BLOQ_USUARIO;
   
   -- El proceso mata la sesion del usuario con el nombre dado. 
@@ -47,7 +68,14 @@ create or replace PACKAGE BODY PKG_GESTION_USUARIOS AS
     --DBMS_OUTPUT.PUT_LINE('ALTER SYSTEM KILL SESSION '''|| VAR_KILL_PARAMS.sid ||','|| VAR_KILL_PARAMS.serial# ||''' IMMEDIATE');
     EXECUTE IMMEDIATE 'ALTER SYSTEM KILL SESSION '''|| SID_N ||','|| SERIAL ||''' IMMEDIATE';
   EXCEPTION
-    WHEN OTHERS THEN DBMS_OUTPUT.PUT_LINE('Ha ocurrido un error '|| SQLERRM);
+    WHEN OTHERS THEN
+      IF SQLCODE = -26 THEN
+        DBMS_OUTPUT.PUT_LINE('ERROR: Sesion inválida.');
+      ELSIF SQLCODE = -1031 THEN
+        DBMS_OUTPUT.PUT_LINE('ERROR: No tienes permisos.');
+      ELSE
+        DBMS_OUTPUT.PUT_LINE('ERROR: ' || SQLERRM);
+      END IF;
   END PR_KILL_SESSION;
   
   -- El proceso crea todos los usuarios que pertenecen a la asignatura. 
