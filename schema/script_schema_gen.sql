@@ -117,7 +117,7 @@ CREATE TABLE RELACION_MATRICULA
     Matricula_curso_academico VARCHAR2 (5) NOT NULL ,
     numero_de_relacion        INTEGER NOT NULL
   ) ;
-ALTER TABLE RELACION_DE_EJERCICIOS ADD CONSTRAINT Relation_5__IDX PRIMARY KEY
+ALTER TABLE RELACION_MATRICULA ADD CONSTRAINT Relation_5__IDX PRIMARY KEY
 (
   Matricula_dni_alumno, Matricula_codigo, Matricula_curso_academico, numero_de_relacion
 )
@@ -154,9 +154,9 @@ ALTER TABLE IMPARTIR ADD CONSTRAINT FK_ASS_3 FOREIGN KEY ( Profesor_dni_profesor
 
 ALTER TABLE IMPARTIR ADD CONSTRAINT FK_ASS_4 FOREIGN KEY ( Asignatura_codigo ) REFERENCES ASIGNATURA ( codigo ) ;
 
-ALTER TABLE RELACION_DE_EJERCICIOS ADD CONSTRAINT FK_ASS_6 FOREIGN KEY ( Matricula_dni_alumno, Matricula_codigo, Matricula_curso_academico ) REFERENCES MATRICULA ( ALUMNO_dni_alumno, ASIGNATURA_codigo, curso_academico ) ;
+ALTER TABLE RELACION_MATRICULA ADD CONSTRAINT FK_ASS_6 FOREIGN KEY ( Matricula_dni_alumno, Matricula_codigo, Matricula_curso_academico ) REFERENCES MATRICULA ( ALUMNO_dni_alumno, ASIGNATURA_codigo, curso_academico ) ;
 
-ALTER TABLE RELACION_DE_EJERCICIOS ADD CONSTRAINT FK_ASS_7 FOREIGN KEY ( Ejercicio_id_ejercicio ) REFERENCES EJERCICIO ( id_ejercicio ) ;
+ALTER TABLE RELACION_MATRICULA ADD CONSTRAINT FK_ASS_7 FOREIGN KEY ( Ejercicio_id_ejercicio ) REFERENCES EJERCICIO ( id_ejercicio ) ;
 
 ALTER TABLE MATRICULA ADD CONSTRAINT MATRICULA_ALUMNO_FK FOREIGN KEY ( ALUMNO_dni_alumno ) REFERENCES ALUMNO ( dni_alumno ) ;
 
