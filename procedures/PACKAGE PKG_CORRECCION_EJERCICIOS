@@ -1,6 +1,6 @@
 create or replace 
 PACKAGE PKG_CORRECCION_EJERCICIOS AS 
 
-  PROCEDURE PR_CORREGIR_EJERCICIOS(id_ejer in ejercicio.id_ejercicio%type, answer in respuesta.respuesta%type);
+  PROCEDURE PR_CORREGIR_EJERCICIOS(id_ejer in ejercicio.id_ejercicio%type, answer in respuesta.respuesta%type,DNI IN RESPUESTA.DNI_ALUMNO%TYPE);
   
 END PKG_CORRECCION_EJERCICIOS;
