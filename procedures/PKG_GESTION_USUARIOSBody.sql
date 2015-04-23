@@ -97,15 +97,6 @@ create or replace PACKAGE BODY PKG_GESTION_USUARIOS AS
     LOOP
       PR_CREAR_USUARIO(VAR_USUARIO.usuario);
     END LOOP;
-  EXCEPTION
-    WHEN OTHERS THEN
-      IF SQLCODE = -1920 THEN
-        DBMS_OUTPUT.PUT_LINE('ERROR: Usuario ya existente.');
-      ELSIF SQLCODE = -1031 THEN
-        DBMS_OUTPUT.PUT_LINE('ERROR: No tienes permisos.');
-      ELSE
-        DBMS_OUTPUT.PUT_LINE('ERROR: ' || SQLERRM);
-      END IF;
   END PR_CREAR_USUARIO_ASIG;
 
   -- El proceso borra todos los usuarios que pertenecen a la asignatura. 
@@ -127,15 +118,6 @@ create or replace PACKAGE BODY PKG_GESTION_USUARIOS AS
     LOOP
       PR_BORRAR_USUARIO(VAR_USUARIO.usuario);
     END LOOP;
-  EXCEPTION
-    WHEN OTHERS THEN
-      IF SQLCODE = -1918 THEN
-        DBMS_OUTPUT.PUT_LINE('ERROR: Usuario no existente.');
-      ELSIF SQLCODE = -1031 THEN
-        DBMS_OUTPUT.PUT_LINE('ERROR: No tienes permisos.');
-      ELSE
-        DBMS_OUTPUT.PUT_LINE('ERROR: ' || SQLERRM);
-      END IF;
   END PR_BORRAR_USUARIO_ASIG;
 
   -- El proceso bloquea a todos los usuarios que pertenecen a la asignatura.
@@ -157,20 +139,21 @@ create or replace PACKAGE BODY PKG_GESTION_USUARIOS AS
     LOOP
       PR_BLOQ_USUARIO(VAR_USUARIO.usuario);
     END LOOP;
-  EXCEPTION
-    WHEN OTHERS THEN
-      IF SQLCODE = -1918 THEN
-        DBMS_OUTPUT.PUT_LINE('ERROR: Usuario no existente.');
-      ELSIF SQLCODE = -1031 THEN
-        DBMS_OUTPUT.PUT_LINE('ERROR: No tienes permisos.');
-      ELSE
-        DBMS_OUTPUT.PUT_LINE('ERROR: ' || SQLERRM);
-      END IF;
   END PR_BLOQ_USUARIO_ASIG;
   
-  PROCEDURE PR_KILL_SESSION_ASIG(ASIGNATURA IN Asignatura.nombre%TYPE) AS
+  PROCEDURE PR_KILL_SESSION_ASIG(ASIGNATURA IN Asignatura.nombre%TYPE,
+      CURSO IN Matricula.Curso_academico%TYPE DEFAULT to_char(sysdate, 'YY')||'/'||to_char(add_months(sysdate,12), 'YY')) AS
+
+    CURSOR C_USUARIOS_ASIG IS
+      SELECT Matricula.usuario FROM Matricula
+      JOIN Asignatura ON Matricula.asignatura_codigo = Asignatura.codigo
+      WHERE UPPER(Asignatura.nombre) = UPPER(ASIGNATURA)
+      AND Matricula.curso_academico = CURSO;
   BEGIN
-    NULL;
+    FOR VAR_USUARIO IN C_USUARIOS_ASIG
+    LOOP
+      PR_KILL_SESSION(VAR_USUARIO.usuario);
+    END LOOP;
   END PR_KILL_SESSION_ASIG;
 
 END PKG_GESTION_USUARIOS;
