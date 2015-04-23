@@ -97,6 +97,15 @@ create or replace PACKAGE BODY PKG_GESTION_USUARIOS AS
     LOOP
       PR_CREAR_USUARIO(VAR_USUARIO.usuario);
     END LOOP;
+  EXCEPTION
+    WHEN OTHERS THEN
+      IF SQLCODE = -1920 THEN
+        DBMS_OUTPUT.PUT_LINE('ERROR: Usuario ya existente.');
+      ELSIF SQLCODE = -1031 THEN
+        DBMS_OUTPUT.PUT_LINE('ERROR: No tienes permisos.');
+      ELSE
+        DBMS_OUTPUT.PUT_LINE('ERROR: ' || SQLERRM);
+      END IF;
   END PR_CREAR_USUARIO_ASIG;
 
   -- El proceso borra todos los usuarios que pertenecen a la asignatura. 
@@ -119,7 +128,14 @@ create or replace PACKAGE BODY PKG_GESTION_USUARIOS AS
       PR_BORRAR_USUARIO(VAR_USUARIO.usuario);
     END LOOP;
   EXCEPTION
-    WHEN OTHERS THEN DBMS_OUTPUT.PUT_LINE('Ha ocurrido un error '|| SQLERRM);
+    WHEN OTHERS THEN
+      IF SQLCODE = -1918 THEN
+        DBMS_OUTPUT.PUT_LINE('ERROR: Usuario no existente.');
+      ELSIF SQLCODE = -1031 THEN
+        DBMS_OUTPUT.PUT_LINE('ERROR: No tienes permisos.');
+      ELSE
+        DBMS_OUTPUT.PUT_LINE('ERROR: ' || SQLERRM);
+      END IF;
   END PR_BORRAR_USUARIO_ASIG;
 
   -- El proceso bloquea a todos los usuarios que pertenecen a la asignatura.
@@ -142,7 +158,14 @@ create or replace PACKAGE BODY PKG_GESTION_USUARIOS AS
       PR_BLOQ_USUARIO(VAR_USUARIO.usuario);
     END LOOP;
   EXCEPTION
-    WHEN OTHERS THEN DBMS_OUTPUT.PUT_LINE('Ha ocurrido un error '|| SQLERRM);
+    WHEN OTHERS THEN
+      IF SQLCODE = -1918 THEN
+        DBMS_OUTPUT.PUT_LINE('ERROR: Usuario no existente.');
+      ELSIF SQLCODE = -1031 THEN
+        DBMS_OUTPUT.PUT_LINE('ERROR: No tienes permisos.');
+      ELSE
+        DBMS_OUTPUT.PUT_LINE('ERROR: ' || SQLERRM);
+      END IF;
   END PR_BLOQ_USUARIO_ASIG;
   
   PROCEDURE PR_KILL_SESSION_ASIG(ASIGNATURA IN Asignatura.nombre%TYPE) AS
