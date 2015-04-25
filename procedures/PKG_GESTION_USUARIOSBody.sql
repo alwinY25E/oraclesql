@@ -1,4 +1,4 @@
-create or replace PACKAGE BODY PKG_GESTION_USUARIOS AS
+﻿create or replace PACKAGE BODY PKG_GESTION_USUARIOS AS
 
   -- El proceso crea un usuario con el nombre dado. 
   -- La password inicial sera el nombre de usuario.
@@ -81,70 +81,131 @@ create or replace PACKAGE BODY PKG_GESTION_USUARIOS AS
   -- El proceso crea todos los usuarios que pertenecen a la asignatura. 
   -- Si no se proporciona curso academico se toma por defecto el curso actual.
   -- Calculado con to_char(sysdate, 'YY')||'/'||to_char(add_months(sysdate,12), 'YY')
-  -- Param: ASIGNATURA, CURSO ACADEMICO
-  PROCEDURE PR_CREAR_USUARIO_ASIG(ASIGNATURA IN Asignatura.nombre%TYPE, 
+  -- Param: ASIGNATURA_NAME, CURSO ACADEMICO
+  PROCEDURE PR_CREAR_USUARIO_ASIG(ASIGNATURA_NAME IN Asignatura.nombre%TYPE, 
       CURSO IN Matricula.Curso_academico%TYPE DEFAULT to_char(sysdate, 'YY')||'/'||to_char(add_months(sysdate,12), 'YY')) AS
+    -- Variable que guarda si una asignatura existe o no (select)
+    VAR_ASIG_NAME Asignatura.nombre%TYPE;
+    -- Excepcion para cuando no existe una asignatura
+    ERR_ASIG_INEXISTENTE EXCEPTION;
     -- Cursor con todos los nombres de usuarios de alumnos que pertenecen
     -- a la asignatura con el nombre dado
     CURSOR C_USUARIOS_ASIG IS
     SELECT Matricula.usuario FROM Matricula 
     JOIN Asignatura ON Matricula.asignatura_codigo = Asignatura.codigo
-    WHERE UPPER(Asignatura.nombre) = UPPER(ASIGNATURA)
+    WHERE UPPER(Asignatura.nombre) = UPPER(ASIGNATURA_NAME)
     AND Matricula.curso_academico = CURSO;
-  BEGIN
+  BEGIN    
+    BEGIN
+      -- Seleccionamos el nombre de la tabla por si no existe
+      SELECT nombre INTO VAR_ASIG_NAME FROM Asignatura 
+      WHERE UPPER(nombre) = UPPER(ASIGNATURA_NAME);
+    EXCEPTION
+      -- Sin es vacio lanzamos la excepcion
+      WHEN NO_DATA_FOUND THEN RAISE ERR_ASIG_INEXISTENTE; 
+    END;
     -- Recorremos el cursor y vamos creando usuarios
     FOR VAR_USUARIO IN C_USUARIOS_ASIG 
     LOOP
       PR_CREAR_USUARIO(VAR_USUARIO.usuario);
     END LOOP;
+  EXCEPTION
+    WHEN ERR_ASIG_INEXISTENTE THEN DBMS_OUTPUT.PUT_LINE('ERROR: Asignatura inexistente.');
+    WHEN OTHERS THEN DBMS_OUTPUT.PUT_LINE('ERROR: ' || SQLERRM);
   END PR_CREAR_USUARIO_ASIG;
 
   -- El proceso borra todos los usuarios que pertenecen a la asignatura. 
   -- Si no se proporciona curso academico se toma por defecto el curso actual.
   -- Calculado con to_char(sysdate, 'YY')||'/'||to_char(add_months(sysdate,12), 'YY')
-  -- Param: ASIGNATURA, CURSO ACADEMICO
-  PROCEDURE PR_BORRAR_USUARIO_ASIG(ASIGNATURA IN Asignatura.nombre%TYPE, 
+  -- Param: ASIGNATURA_NAME, CURSO ACADEMICO
+  PROCEDURE PR_BORRAR_USUARIO_ASIG(ASIGNATURA_NAME IN Asignatura.nombre%TYPE, 
       CURSO IN Matricula.Curso_academico%TYPE DEFAULT to_char(sysdate, 'YY')||'/'||to_char(add_months(sysdate,12), 'YY')) AS
+    -- Variable que guarda si una asignatura existe o no (select)
+    VAR_ASIG_NAME Asignatura.nombre%TYPE;
+    -- Excepcion para cuando no existe una asignatura
+    ERR_ASIG_INEXISTENTE EXCEPTION;
     -- Cursor con todos los nombres de usuarios de alumnos que pertenecen
     -- a la asignatura con el nombre dado
     CURSOR C_USUARIOS_ASIG IS
     SELECT Matricula.usuario FROM Matricula 
     JOIN Asignatura ON Matricula.asignatura_codigo = Asignatura.codigo
-    WHERE UPPER(Asignatura.nombre) = UPPER(ASIGNATURA)
+    WHERE UPPER(Asignatura.nombre) = UPPER(ASIGNATURA_NAME)
     AND Matricula.curso_academico = CURSO;
   BEGIN
+    BEGIN
+      -- Seleccionamos el nombre de la tabla por si no existe
+      SELECT nombre INTO VAR_ASIG_NAME FROM Asignatura 
+      WHERE UPPER(nombre) = UPPER(ASIGNATURA_NAME);
+    EXCEPTION
+      -- Sin es vacio lanzamos la excepcion
+      WHEN NO_DATA_FOUND THEN RAISE ERR_ASIG_INEXISTENTE; 
+    END;
     -- Recorremos el cursor y vamos bloqueando usuarios
     FOR VAR_USUARIO IN C_USUARIOS_ASIG 
     LOOP
       PR_BORRAR_USUARIO(VAR_USUARIO.usuario);
     END LOOP;
+  EXCEPTION
+    WHEN ERR_ASIG_INEXISTENTE THEN DBMS_OUTPUT.PUT_LINE('ERROR: Asignatura inexistente.');
+    WHEN OTHERS THEN DBMS_OUTPUT.PUT_LINE('ERROR: ' || SQLERRM);
   END PR_BORRAR_USUARIO_ASIG;
 
   -- El proceso bloquea a todos los usuarios que pertenecen a la asignatura.
   -- Si no se proporciona curso academico se toma por defecto el curso actual.
   -- Calculado con to_char(sysdate, 'YY')||'/'||to_char(add_months(sysdate,12), 'YY')
-  -- Param: ASIGNATURA, CURSO ACADEMICO
-  PROCEDURE PR_BLOQ_USUARIO_ASIG(ASIGNATURA IN Asignatura.nombre%TYPE, 
+  -- Param: ASIGNATURA_NAME, CURSO ACADEMICO
+  PROCEDURE PR_BLOQ_USUARIO_ASIG(ASIGNATURA_NAME IN Asignatura.nombre%TYPE, 
       CURSO IN Matricula.Curso_academico%TYPE DEFAULT to_char(sysdate, 'YY')||'/'||to_char(add_months(sysdate,12), 'YY')) AS
+    -- Variable que guarda si una asignatura existe o no (select)
+    VAR_ASIG_NAME Asignatura.nombre%TYPE;
+    -- Excepcion para cuando no existe una asignatura
+    ERR_ASIG_INEXISTENTE EXCEPTION;
     -- Cursor con todos los nombres de usuarios de alumnos que pertenecen
     -- a la asignatura con el nombre dado
     CURSOR C_USUARIOS_ASIG IS
     SELECT Matricula.usuario FROM Matricula 
     JOIN Asignatura ON Matricula.asignatura_codigo = Asignatura.codigo
-    WHERE UPPER(Asignatura.nombre) = UPPER(ASIGNATURA)
+    WHERE UPPER(Asignatura.nombre) = UPPER(ASIGNATURA_NAME)
     AND Matricula.curso_academico = CURSO;
   BEGIN
+    BEGIN
+      -- Seleccionamos el nombre de la tabla por si no existe
+      SELECT nombre INTO VAR_ASIG_NAME FROM Asignatura 
+      WHERE UPPER(nombre) = UPPER(ASIGNATURA_NAME);
+    EXCEPTION
+      -- Sin es vacio lanzamos la excepcion
+      WHEN NO_DATA_FOUND THEN RAISE ERR_ASIG_INEXISTENTE; 
+    END;
     -- Recorremos el cursor y vamos bloqueando usuarios
     FOR VAR_USUARIO IN C_USUARIOS_ASIG 
     LOOP
       PR_BLOQ_USUARIO(VAR_USUARIO.usuario);
     END LOOP;
+  EXCEPTION
+    WHEN ERR_ASIG_INEXISTENTE THEN DBMS_OUTPUT.PUT_LINE('ERROR: Asignatura inexistente.');
+    WHEN OTHERS THEN DBMS_OUTPUT.PUT_LINE('ERROR: ' || SQLERRM);
   END PR_BLOQ_USUARIO_ASIG;
   
-  PROCEDURE PR_KILL_SESSION_ASIG(ASIGNATURA IN Asignatura.nombre%TYPE,
+  PROCEDURE PR_KILL_SESSION_ASIG(ASIGNATURA_NAME IN Asignatura.nombre%TYPE,
       CURSO IN Matricula.Curso_academico%TYPE DEFAULT to_char(sysdate, 'YY')||'/'||to_char(add_months(sysdate,12), 'YY')) AS
-
+    -- Variable que guarda si una asignatura existe o no (select)
+    VAR_ASIG_NAME Asignatura.nombre%TYPE;
+    -- Excepcion para cuando no existe una asignatura
+    ERR_ASIG_INEXISTENTE EXCEPTION;
+  BEGIN
+    BEGIN
+      -- Seleccionamos el nombre de la tabla por si no existe
+      SELECT nombre INTO VAR_ASIG_NAME FROM Asignatura 
+      WHERE UPPER(nombre) = UPPER(ASIGNATURA_NAME);
+    EXCEPTION
+      -- Sin es vacio lanzamos la excepcion
+      WHEN NO_DATA_FOUND THEN RAISE ERR_ASIG_INEXISTENTE; 
+    END;
+    NULL;
     -- SELECT SID, USERNAME FROM v$session INNER JOIN docencia.matricula ON UPPER(v$session.username) = UPPER(docencia.matricula.usuario);
+  EXCEPTION
+    WHEN ERR_ASIG_INEXISTENTE THEN DBMS_OUTPUT.PUT_LINE('ERROR: Asignatura inexistente.');
+    WHEN OTHERS THEN DBMS_OUTPUT.PUT_LINE('ERROR: ' || SQLERRM);
   END PR_KILL_SESSION_ASIG;
 
 END PKG_GESTION_USUARIOS;
