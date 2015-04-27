@@ -6,6 +6,7 @@ create or replace PACKAGE BODY PKG_CORRECCION_EJERCICIOS AS
     -- Una variable para guardar la solucion ideal del ejercicio
     -- La solucion es un script de sentencias ejecutables
     VAR_EJERCICIO EJERCICIO.SOLUCION%TYPE;
+    VAR_NOTA_EJER EJERCICIO.PUNTOS%TYPE;
     -- Otra variable para almacenar el numero de diferentes filas entre la solucion del alumno y la ideal
     VAR_CONT NUMBER;
   BEGIN
@@ -17,7 +18,9 @@ create or replace PACKAGE BODY PKG_CORRECCION_EJERCICIOS AS
     SELECT COUNT(*) INTO VAR_CONT FROM CORRECCION ;
     -- Al tener la respuesta correcta, se almacena la fecha de entrega
     IF VAR_CONT = 0 THEN
+      SELECT EJERCICIO.PUNTOS INTO VAR_NOTA_EJER FROM EJERCICIO WHERE EJERCICIO.ID_EJERCICIO = ID_EJER;
       UPDATE Respuesta SET SUBMITTED_AT = SYSDATE WHERE Respuesta.id_ejercicio = ID_EJERCICIO AND Respuesta.dni_alumno = DNI;
+      UPDATE Respuesta SET NOTA = VAR_NOTA_EJER WHERE Respuesta.id_ejercicio = ID_EJERCICIO AND Respuesta.dni_alumno = DNI;
       DBMS_OUTPUT.PUT_LINE('RESPUESTA CORRECTA');
     ELSE
       DBMS_OUTPUT.PUT_LINE('RESPUESTA INCORRECTA'); -- Feedback
