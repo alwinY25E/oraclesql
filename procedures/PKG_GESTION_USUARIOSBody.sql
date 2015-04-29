@@ -1,4 +1,5 @@
-﻿create or replace PACKAGE BODY PKG_GESTION_USUARIOS AS
+create or replace 
+PACKAGE BODY PKG_GESTION_USUARIOS AS
 
   -- El proceso crea un usuario con el nombre dado. 
   -- La password inicial sera el nombre de usuario.
@@ -53,26 +54,28 @@
   END PR_BLOQ_USUARIO;
   
   -- El proceso mata la sesion del usuario con el nombre dado. 
-  -- Param: SID, SERIAL#
-  PROCEDURE PR_KILL_SESSION(SID_N IN NUMBER, SERIAL IN NUMBER) AS
+  -- Param: NOMBRE
+  PROCEDURE PR_KILL_SESSION(NOMBRE IN Matricula.usuario%TYPE) AS
   -- Variable que va a guardar los parametros necesarios para la instruccion
   -- alter system kill session 'SID,SERIAL#' immediate
-  -- VAR_KILL_PARAMS V$SESSION%ROWTYPE;
+   VAR_KILL_PARAMS SESIONES%ROWTYPE;
   BEGIN    
     -- Seleccionamos los parametros necesario para matar la session del usuario
     -- de la tabla v$session
-    -- SELECT sid,serial# INTO VAR_KILL_PARAMS
-    -- FROM V$SESSION WHERE username=UPPER(NOMBRE);
+     SELECT * INTO VAR_KILL_PARAMS
+     FROM SESIONES WHERE username=UPPER(NOMBRE);
     
     -- Ejecutamos la instruccion que mata la sesion
     --DBMS_OUTPUT.PUT_LINE('ALTER SYSTEM KILL SESSION '''|| VAR_KILL_PARAMS.sid ||','|| VAR_KILL_PARAMS.serial# ||''' IMMEDIATE');
-    EXECUTE IMMEDIATE 'ALTER SYSTEM KILL SESSION '''|| SID_N ||','|| SERIAL ||''' IMMEDIATE';
+    EXECUTE IMMEDIATE 'ALTER SYSTEM KILL SESSION '''|| VAR_KILL_PARAMS.sid ||','|| VAR_KILL_PARAMS.serial# ||''' IMMEDIATE';
   EXCEPTION
     WHEN OTHERS THEN
       IF SQLCODE = -26 THEN
         DBMS_OUTPUT.PUT_LINE('ERROR: Sesion inválida.');
       ELSIF SQLCODE = -1031 THEN
         DBMS_OUTPUT.PUT_LINE('ERROR: No tienes permisos.');
+      ELSIF SQLCODE = +100 THEN
+      DBMS_OUTPUT.PUT_LINE('ERROR: Usuario sin sesión.');
       ELSE
         DBMS_OUTPUT.PUT_LINE('ERROR: ' || SQLERRM);
       END IF;
@@ -192,6 +195,13 @@
     VAR_ASIG_NAME Asignatura.nombre%TYPE;
     -- Excepcion para cuando no existe una asignatura
     ERR_ASIG_INEXISTENTE EXCEPTION;
+    -- Cursor con todos los nombres de usuarios de alumnos que pertenecen
+    -- a la asignatura con el nombre dado
+    CURSOR C_USUARIOS_ASIG IS
+    SELECT Matricula.usuario FROM Matricula 
+    JOIN Asignatura ON Matricula.asignatura_codigo = Asignatura.codigo
+    WHERE UPPER(Asignatura.nombre) = UPPER(ASIGNATURA_NAME)
+    AND Matricula.curso_academico = CURSO;
   BEGIN
     BEGIN
       -- Seleccionamos el nombre de la tabla por si no existe
@@ -201,8 +211,11 @@
       -- Sin es vacio lanzamos la excepcion
       WHEN NO_DATA_FOUND THEN RAISE ERR_ASIG_INEXISTENTE; 
     END;
-    NULL;
-    -- SELECT SID, USERNAME FROM v$session INNER JOIN docencia.matricula ON UPPER(v$session.username) = UPPER(docencia.matricula.usuario);
+     -- Recorremos el cursor y vamos bloqueando usuarios
+    FOR VAR_USUARIO IN C_USUARIOS_ASIG 
+    LOOP
+      PR_KILL_SESSION(VAR_USUARIO.usuario);
+    END LOOP;
   EXCEPTION
     WHEN ERR_ASIG_INEXISTENTE THEN DBMS_OUTPUT.PUT_LINE('ERROR: Asignatura inexistente.');
     WHEN OTHERS THEN DBMS_OUTPUT.PUT_LINE('ERROR: ' || SQLERRM);
