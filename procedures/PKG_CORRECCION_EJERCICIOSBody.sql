@@ -12,7 +12,7 @@ create or replace PACKAGE BODY PKG_CORRECCION_EJERCICIOS AS
   BEGIN
     SELECT Ejercicio.solucion INTO VAR_EJERCICIO FROM Ejercicio WHERE Ejercicio.id_ejercicio = ID_EJER;
     -- Creamos una vista para comparar las salidas del script del alumno y el de la solucion ideal 
-    --DBMS_OUTPUT.PUT_LINE('CREATE OR REPLACE VIEW CORRECCION AS (('|| VAR_EJERCICIO || ' MINUS ' || ANSWER || ') UNION (' ||ANSWER|| ' MINUS ' || VAR_EJERCICIO || '))');
+    --DBMS_OUTPUT.PUT_LINE('CREATE OR REPLACE VIEW V$CORRECCION AS (('|| VAR_EJERCICIO || ' MINUS ' || ANSWER || ') UNION (' ||ANSWER|| ' MINUS ' || VAR_EJERCICIO || '))');
     EXECUTE IMMEDIATE 'create or replace VIEW V$CORRECCION AS (('|| VAR_EJERCICIO || ' MINUS ' || ANSWER || ') UNION (' ||ANSWER|| ' MINUS ' || VAR_EJERCICIO || '))' ;
     -- Si las salidas son iguales el numero de filas de la vista debe ser 0 
     SELECT COUNT(*) INTO VAR_CONT FROM CORRECCION ;
