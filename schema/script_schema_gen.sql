@@ -171,7 +171,12 @@ ALTER TABLE RESPUESTA ADD CONSTRAINT Respuesta_Ejercicio_FK FOREIGN KEY ( id_eje
 ALTER TABLE RESPUESTA ADD CONSTRAINT Respuesta_Matricula_FK FOREIGN KEY ( dni_alumno, codigo, curso_academico ) REFERENCES MATRICULA ( ALUMNO_dni_alumno, ASIGNATURA_codigo, curso_academico ) ;
 
 
-
+CREATE TABLE ESTADISTICAS(
+DNI_ALUMNO VARCHAR2(9) REFERENCES ALUMNO(DNI_ALUMNO),
+ULTIMA_SESION DATE,
+NUMERO_CONEXIONES NUMBER,
+TIEMPO_EMPLEADO NUMBER
+);
 -- Informe de Resumen de Oracle SQL Developer Data Modeler: 
 -- 
 -- CREATE TABLE                            10
