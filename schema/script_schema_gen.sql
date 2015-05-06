@@ -142,7 +142,8 @@ CREATE TABLE RESPUESTA
     codigo          VARCHAR2 (10) NOT NULL ,
     curso_academico VARCHAR2 (5) NOT NULL ,
     submitted_at    TIMESTAMP NOT NULL ,
-    id_ejercicio    INTEGER NOT NULL
+    id_ejercicio    INTEGER NOT NULL ,
+    intentos        INTEGER DEFAULT 0 NOT NULL 
   ) ;
 ALTER TABLE RESPUESTA ADD CONSTRAINT Respuesta_PK PRIMARY KEY
 (
@@ -170,13 +171,13 @@ ALTER TABLE RESPUESTA ADD CONSTRAINT Respuesta_Ejercicio_FK FOREIGN KEY ( id_eje
 
 ALTER TABLE RESPUESTA ADD CONSTRAINT Respuesta_Matricula_FK FOREIGN KEY ( dni_alumno, codigo, curso_academico ) REFERENCES MATRICULA ( ALUMNO_dni_alumno, ASIGNATURA_codigo, curso_academico ) ;
 
-
 CREATE TABLE ESTADISTICAS(
 USUARIO VARCHAR2(25),
 ULTIMA_SESION TIMESTAMP,
 NUMERO_CONEXIONES NUMBER,
 TIEMPO_EMPLEADO NUMBER
 );
+
 -- Informe de Resumen de Oracle SQL Developer Data Modeler: 
 -- 
 -- CREATE TABLE                            10
