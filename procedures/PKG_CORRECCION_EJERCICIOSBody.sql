@@ -16,6 +16,8 @@ create or replace PACKAGE BODY PKG_CORRECCION_EJERCICIOS AS
     EXECUTE IMMEDIATE 'create or replace VIEW V$CORRECCION AS (('|| VAR_EJERCICIO || ' MINUS ' || ANSWER || ') UNION (' ||ANSWER|| ' MINUS ' || VAR_EJERCICIO || '))' ;
     -- Si las salidas son iguales el numero de filas de la vista debe ser 0 
     SELECT COUNT(*) INTO VAR_CONT FROM CORRECCION ;
+    -- Siempre aumentamos en 1 el numero de intentos
+    UPDATE Respuesta SET INTENTOS = INTENTOS+1 WHERE Respuesta.id_ejercicio = ID_EJERCICIO AND Respuesta.dni_alumno = DNI;
     -- Al tener la respuesta correcta, se almacena la fecha de entrega
     IF VAR_CONT = 0 THEN
       SELECT EJERCICIO.PUNTOS INTO VAR_NOTA_EJER FROM EJERCICIO WHERE EJERCICIO.ID_EJERCICIO = ID_EJER;
