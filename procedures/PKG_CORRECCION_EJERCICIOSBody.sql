@@ -28,6 +28,14 @@ create or replace PACKAGE BODY PKG_CORRECCION_EJERCICIOS AS
       DBMS_OUTPUT.PUT_LINE('RESPUESTA INCORRECTA'); -- Feedback
     -- Creo que hay que checker antes si submitted at es nulo para poder actualizar cnd entregue la respuesta correcta en el caso contrario
     END IF;
+    
+    EXCEPTION
+      WHEN OTHERS THEN
+        IF SQLCODE = -1789 THEN
+          DBMS_OUTPUT.PUT_LINE('ERROR: Las columnas de la respuesta y la solucion del ejercicio no coinciden.');
+        ELSE
+          DBMS_OUTPUT.PUT_LINE('ERROR: ' || SQLERRM);
+        END IF;
   END PR_CORREC_EJER_ALUMNO;
   
   -- Un procedimiento que corrige todos los ejercicios de un solo alumno
