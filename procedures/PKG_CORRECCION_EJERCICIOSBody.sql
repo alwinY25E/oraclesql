@@ -47,9 +47,11 @@ create or replace PACKAGE BODY PKG_CORRECCION_EJERCICIOS AS
     
     EXCEPTION
       WHEN OTHERS THEN -- Si tiene algun error tambien se almacena la fecha, la nota y los intentos
+      
         UPDATE Respuesta SET INTENTOS = INTENTOS+1 WHERE Respuesta.id_ejercicio = ID_EJER AND Respuesta.dni_alumno = DNI;
         UPDATE Respuesta SET SUBMITTED_AT = SYSDATE WHERE Respuesta.id_ejercicio = ID_EJER AND Respuesta.dni_alumno = DNI;
         UPDATE Respuesta SET NOTA = VAR_NOTA_EJER WHERE Respuesta.id_ejercicio = ID_EJER AND Respuesta.dni_alumno = DNI;
+        
         IF SQLCODE = -1789 THEN
           DBMS_OUTPUT.PUT_LINE('ERROR: Las columnas de la respuesta y la solucion del ejercicio no coinciden.');
         ELSIF SQLCODE = -942 THEN
