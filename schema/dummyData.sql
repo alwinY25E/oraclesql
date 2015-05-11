@@ -68,3 +68,11 @@ INSERT INTO TRABAJAR VALUES ('23678356S', '14535674Y');
 INSERT INTO TRABAJAR VALUES ('98645673K', '23678356R');
 INSERT INTO TRABAJAR VALUES ('23564767L', '45367864G');
 INSERT INTO TRABAJAR VALUES ('45367864C', '43253567I');
+
+-- EJEMPLO PARA COMPROBAR QUE TODO FUNCIONA
+-- Dame los nombres los de los empleados que trabajen en la empresa con cif 78695949T
+SELECT empleado.NOMBRE, empresa.nombre AS empresa
+FROM EMPLEADO 
+JOIN TRABAJAR ON empleado.nif_empleado = trabajar.empleado_nif_empleado
+JOIN empresa ON trabajar.empresa_cif_empresa = empresa.cif_empresa
+WHERE trabajar.empresa_cif_empresa = '78695949T';
