@@ -13,16 +13,14 @@ create or replace PACKAGE BODY PKG_CORRECCION_EJERCICIOS AS
     SELECT Ejercicio.solucion INTO VAR_EJERCICIO FROM Ejercicio WHERE Ejercicio.id_ejercicio = ID_EJER;
     -- Creamos una vista para comparar las salidas del script del alumno y el de la solucion ideal 
     --DBMS_OUTPUT.PUT_LINE('CREATE OR REPLACE VIEW V$CORRECCION AS (('|| VAR_EJERCICIO || ' MINUS ' || ANSWER || ') UNION (' ||ANSWER|| ' MINUS ' || VAR_EJERCICIO || '))');
-    EXECUTE IMMEDIATE 'create or replace VIEW V$CORRECCION AS (('|| VAR_EJERCICIO || ' MINUS ' || ANSWER || ') UNION (' ||ANSWER|| ' MINUS ' || VAR_EJERCICIO || '))' ;
-    -- Si las salidas son iguales el numero de filas de la vista debe ser 0 
-    SELECT COUNT(*) INTO VAR_CONT FROM V$CORRECCION ;
+    EXECUTE IMMEDIATE 'SELECT COUNT(*) FROM (('|| VAR_EJERCICIO || ' MINUS ' || ANSWER || ') UNION (' ||ANSWER|| ' MINUS ' || VAR_EJERCICIO || '))' INTO VAR_CONT;
     -- Siempre aumentamos en 1 el numero de intentos
-    UPDATE Respuesta SET INTENTOS = INTENTOS+1 WHERE Respuesta.id_ejercicio = ID_EJERCICIO AND Respuesta.dni_alumno = DNI;
+    UPDATE Respuesta SET INTENTOS = INTENTOS+1 WHERE Respuesta.id_ejercicio = ID_EJER AND Respuesta.dni_alumno = DNI;
     -- Al tener la respuesta correcta, se almacena la fecha de entrega
     IF VAR_CONT = 0 THEN
       SELECT EJERCICIO.PUNTOS INTO VAR_NOTA_EJER FROM EJERCICIO WHERE EJERCICIO.ID_EJERCICIO = ID_EJER;
-      UPDATE Respuesta SET SUBMITTED_AT = SYSDATE WHERE Respuesta.id_ejercicio = ID_EJERCICIO AND Respuesta.dni_alumno = DNI;
-      UPDATE Respuesta SET NOTA = VAR_NOTA_EJER WHERE Respuesta.id_ejercicio = ID_EJERCICIO AND Respuesta.dni_alumno = DNI;
+      UPDATE Respuesta SET SUBMITTED_AT = SYSDATE WHERE Respuesta.id_ejercicio = ID_EJER AND Respuesta.dni_alumno = DNI;
+      UPDATE Respuesta SET NOTA = VAR_NOTA_EJER WHERE Respuesta.id_ejercicio = ID_EJER AND Respuesta.dni_alumno = DNI;
       DBMS_OUTPUT.PUT_LINE('RESPUESTA CORRECTA');
     ELSE
       DBMS_OUTPUT.PUT_LINE('RESPUESTA INCORRECTA'); -- Feedback
