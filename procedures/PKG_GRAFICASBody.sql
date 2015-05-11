@@ -21,13 +21,4 @@ PACKAGE BODY PKG_GRAFICAS AS
       END IF;
   END PR_DIBUJAR_GRAFICA;
 
-  -- Dado el nombre de la vista que contiene los datos genera un gráfico de barras
-  -- Para usar este método la vista tiene que tener dos columnas:
-  -- NAME(varchar2), VALUE(integer)
-  -- ARGUMENTOS: VIEW_NAME
-  PROCEDURE PR_DIBUJAR_GRAFICA_HTML (VIEW_NAME IN VARCHAR2) AS
-  BEGIN
-    EXECUTE IMMEDIATE '';
-  END PR_DIBUJAR_GRAFICA_HTML;
-
 END PKG_GRAFICAS;
