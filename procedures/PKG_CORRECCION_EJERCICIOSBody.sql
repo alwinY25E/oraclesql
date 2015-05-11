@@ -31,6 +31,8 @@ create or replace PACKAGE BODY PKG_CORRECCION_EJERCICIOS AS
       WHEN OTHERS THEN
         IF SQLCODE = -1789 THEN
           DBMS_OUTPUT.PUT_LINE('ERROR: Las columnas de la respuesta y la solucion del ejercicio no coinciden.');
+        ELSIF SQLCODE = -942 THEN
+          DBMS_OUTPUT.PUT_LINE('ERROR: La tabla o vista no existe.');
         ELSE
           DBMS_OUTPUT.PUT_LINE('ERROR: ' || SQLERRM);
         END IF;
