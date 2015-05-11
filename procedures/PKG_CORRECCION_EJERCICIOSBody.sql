@@ -95,11 +95,17 @@ create or replace PACKAGE BODY PKG_CORRECCION_EJERCICIOS AS
   -- Definimos un cursor para todos los alumnos de la asignatura
   CURSOR C_ALUMNOS IS SELECT alumno_dni_alumno FROM Matricula WHERE asignatura_codigo=ASIGNATURA_COD AND curso_academico=CURSO; 
   BEGIN
+  
+  
     BEGIN
-      SELECT codigo INTO var_asignatura FROM Asignatura;
+    
+      SELECT codigo INTO var_asignatura FROM Asignatura WHERE ASIGNATURA_COD = ASIGNATURA.codigo;
     EXCEPTION   
       WHEN NO_DATA_FOUND THEN RAISE ERR_ASIG_INEX;
+      
     END;
+    
+    
     FOR VAR_ALUMNO IN C_ALUMNOS LOOP
       PR_CORREC_ALL_EJER_ALUMNO(VAR_ALUMNO.alumno_dni_alumno);
     END LOOP;
