@@ -397,6 +397,7 @@ create or replace PACKAGE PKG_CORRECCION_EJERCICIOS AS
   PROCEDURE PR_CORREC_ALL_EJER_ALUMNO (DNI IN Respuesta.dni_alumno%TYPE);
   PROCEDURE PR_CORREC_ALL_ALUMNOS (ASIGNATURA_COD Asignatura.codigo%TYPE);
 END PKG_CORRECCION_EJERCICIOS;
+/
 
 -- 2. Gestión de usuarios
 create or replace 
@@ -419,6 +420,7 @@ PROCEDURE PR_KILL_SESSION_ASIG(ASIGNATURA_NAME IN Asignatura.nombre%TYPE,
       CURSO IN Matricula.Curso_academico%TYPE DEFAULT to_char(sysdate, 'YY')||'/'||to_char(add_months(sysdate,12), 'YY'));
 
 END PKG_GESTION_USUARIOS;
+/
 
 -- 3. Paquete para gráficas
 CREATE OR REPLACE 
@@ -427,6 +429,7 @@ PACKAGE PKG_GRAFICAS AS
   PROCEDURE PR_DIBUJAR_GRAFICA (VIEW_NAME IN VARCHAR2); 
   
 END PKG_GRAFICAS;
+/
 
 -----------------------------                     -----------------------------
 ----------------------------- CUERPOS DE PAQUETES -----------------------------
@@ -550,6 +553,7 @@ create or replace PACKAGE BODY PKG_CORRECCION_EJERCICIOS AS
   END PR_CORREC_ALL_ALUMNOS;
   
 END PKG_CORRECCION_EJERCICIOS;
+/
 
 
 -- 2. Cuerpo de gestión de usuarios
@@ -777,6 +781,7 @@ PACKAGE BODY PKG_GESTION_USUARIOS AS
   END PR_KILL_SESSION_ASIG;
 
 END PKG_GESTION_USUARIOS;
+/
 
 -- 3.Cuerpo de gráficas
 CREATE OR REPLACE
@@ -804,6 +809,7 @@ PACKAGE BODY PKG_GRAFICAS AS
   END PR_DIBUJAR_GRAFICA;
 
 END PKG_GRAFICAS;
+/
 
 
   ------------------------------              ------------------------------
