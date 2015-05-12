@@ -828,14 +828,12 @@ CREATE OR REPLACE VIEW MAS_CONEXIONES_VIEW AS SELECT USUARIO,NUMERO_CONEXIONES,U
 -- Los que mas intentos fallan
 CREATE OR REPLACE VIEW MAS_INTENTOS_FALLIDOS_VIEW AS
 SELECT dni_alumno as name, SUM(intentos) as value FROM Respuesta 
-WHERE nota > 0
 GROUP BY dni_alumno
 ORDER BY SUM(intentos) DESC;
 
 -- Los más fiables
 CREATE OR REPLACE VIEW MAS_FIABLES_VIEW AS
 SELECT dni_alumno as name, SUM(intentos) as value FROM Respuesta
-WHERE nota > 0
 GROUP BY dni_alumno
 ORDER BY SUM(intentos);
 
